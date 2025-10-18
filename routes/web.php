@@ -1,20 +1,20 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\BookingController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route ::get('/hello',function (){
-    $webvar="sawsan";
-    $val=3;
-    $users=[
-    ['id' => 1, 'name' => 'user1'],
-    ['id' => 2, 'name' => 'user2'],
-    ['id' => 3, 'name' => 'user3']
-];
-    return view('hello')-> with('bladeVar', $webvar)->with('value',$val)->with('users',$users);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-Route::get('/myBookings/{name}', [BookingController::class, 'myBookings']);
+
+require __DIR__.'/auth.php';
